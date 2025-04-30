@@ -10,13 +10,18 @@ class ProductRepositoryMongo(ProductRepository):
     def add(self, product: Product) -> Product:
         product_data = product.to_dict()
         result = self.collection.insert_one(product_data)
-        return str(result.inserted_id)
+        product.id = str(result.inserted_id)
+        return product
 
     def get(self, product_id: str) -> Product:
         data = self.collection.find_one({"_id": ObjectId(product_id)})
         if not data:
             raise Exception("Product not found")
-        return Product(**data)
+        return Product.entity_mapping(data)
+    
+    def get_all(self) -> list[Product]:
+        products = self.collection.find({})
+        return [Product.entity_mapping(p) for p in products]
 
     def update(self, product: Product) -> Product:
         self.collection.update_one(
@@ -29,14 +34,14 @@ class ProductRepositoryMongo(ProductRepository):
 
     def find_by_name(self, name: str) -> list[Product]:
         products = self.collection.find({"name": {"$regex": name, "$options": "i"}})
-        return [Product(**p) for p in products]
+        return [Product.entity_mapping(p) for p in products]
 
     def find_by_category(self, category: str) -> list[Product]:
         products = self.collection.find({"category": category})
-        return [Product(**p) for p in products]
+        return [Product.entity_mapping(p) for p in products]
 
     def filter_by_price(self, min_price: float, max_price: float) -> list[Product]:
         products = self.collection.find(
-            {"price": {"$gte": min_price, "$lte": max_price}}
+            {"price.amount": {"$gte": min_price, "$lte": max_price}}
         )
-        return [Product(**p) for p in products]
+        return [Product.entity_mapping(p) for p in products]

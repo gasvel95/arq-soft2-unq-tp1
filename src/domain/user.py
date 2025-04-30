@@ -15,3 +15,19 @@ class User(BaseModel):
 
     def to_dict(self):
         return { "first_name": self.first_name, "last_name": self.last_name, "email": self.email}
+    
+    def entity_mapping(usr) -> dict:
+        res = {}
+        usr_id = ''
+        if usr is not None:
+            if "_id" in usr:
+                usr_id = str(usr["_id"])
+            else:
+                usr_id = usr["id"]
+            res = {
+                "id": usr_id,
+                "first_name": usr["first_name"],
+                "last_name": usr["last_name"],
+                "email": usr["email"]
+            }
+        return res

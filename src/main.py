@@ -25,14 +25,14 @@ seller_service = SellerService(seller_repo)
 product_service = ProductService(product_repo)
 order_service = OrderService(user_repo, product_repo, order_repo)
 
-@app.post("/users")
+@app.post("/users", response_model=User)
 def create_user(data: User):
     return user_service.create_user(data)
 
 @app.put("/users/{user_id}", response_model=User)
 def update_user(user_id:str,data: User):
     u = user_service.update_user(user_id,data)
-    return u.to_dict()
+    return u
 
 @app.get("/users/{user_id}", response_model= User)
 def get_user(user_id: str):
@@ -40,16 +40,16 @@ def get_user(user_id: str):
         u = user_service.get_user(user_id)
     except ValueError:
         raise HTTPException(status_code=404, detail="User not found")
-    return u.to_dict()
+    return u
 
-@app.post("/sellers")
+@app.post("/sellers", response_model=Seller)
 def create_seller(data: Seller):
     return seller_service.create_seller(data)
 
 @app.put("/sellers/{seller_id}", response_model= Seller)
 def create_seller(seller_id,data: Seller):
     s = seller_service.update_seller(seller_id,data)
-    return s.to_dict()
+    return s
 
 @app.get("/sellers/{seller_id}", response_model=Seller)
 def get_seller(seller_id: str):
@@ -57,7 +57,7 @@ def get_seller(seller_id: str):
         s = seller_service.get_seller(seller_id)
     except ValueError:
         raise HTTPException(status_code=404, detail="Seller not found")
-    return s.to_dict()
+    return s
 
 @app.post("/products")
 def create_product(data: Product):
@@ -81,7 +81,27 @@ def get_product(product_id: str):
         p = product_service.get_product(product_id)
     except ValueError:
         raise HTTPException(status_code=404, detail="Product not found")
-    return p.to_dict()
+    return p
+
+@app.delete("/products/{product_id}")
+def delete_product(product_id: str):
+    try:
+        product_service.delete_product(product_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+@app.get("/products", response_model=list[Product])
+def get_products(category: str | None = None, name: str | None = None, gte: int | None = None, lte: int | None = None):
+    results = []
+    if name != None:
+        results = product_service.find_by_name(name)
+    elif category != None:
+        results = product_service.find_by_category(category)
+    elif gte != None and lte != None:
+        results = product_service.find_by_price(gte,lte)
+    else:
+        results = product_service.get_all()
+    return results
 
 @app.post("/orders", response_model=Order)
 def create_order(data: Order):
@@ -89,4 +109,12 @@ def create_order(data: Order):
         order = order_service.process_order(data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    return order.to_dict()
+    return order
+
+@app.get("/orders/{order_id}", response_model=Order)
+def create_order(order_id: str):
+    try:
+        order = order_service.get_order(order_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    return order

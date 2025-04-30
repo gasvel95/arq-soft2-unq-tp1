@@ -7,16 +7,17 @@ class SellerRepositoryMongo(SellerRepository):
     def __init__(self):
         self.collection = db["sellers"]
 
-    def add(self, seller: Seller) -> str:
+    def add(self, seller: Seller) -> Seller:
         seller_data = seller.to_dict()
         result = self.collection.insert_one(seller_data)
-        return str(result.inserted_id)
+        seller.id = str(result.inserted_id)
+        return seller
 
     def get(self, seller_id: str) -> Seller:
         data = self.collection.find_one({"_id": ObjectId(seller_id)})
         if not data:
             raise Exception("Seller not found")
-        return Seller(**data)
+        return Seller.entity_mapping(data)
 
     def update(self, seller: Seller) -> Seller:
         self.collection.update_one(

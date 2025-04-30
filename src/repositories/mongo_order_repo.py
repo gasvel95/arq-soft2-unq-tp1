@@ -17,7 +17,7 @@ class OrderRepositoryMongo(OrderRepository):
         data = self.collection.find_one({"_id": ObjectId(order_id)})
         if not data:
             raise Exception("Order not found")
-        return Order(**data)
+        return Order.entity_mapping(data)
 
     def update(self, order: Order) -> Order:
         self.collection.update_one(

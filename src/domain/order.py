@@ -2,7 +2,6 @@ from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel
 from domain.price import Price
-from domain.product import Product
 
 
 class Order(BaseModel):
@@ -24,3 +23,19 @@ class Order(BaseModel):
             "quantity": self.quantity,
             "total": self.total.to_dict()
         }
+    def entity_mapping(ord) -> dict:
+        res = {}
+        ord_id = ''
+        if ord is not None:
+            if "_id" in ord:
+                ord_id = str(ord["_id"])
+            else:
+                ord_id = ord["id"]
+            res = {
+                "id": ord_id,
+                "buyer_id": ord["buyer_id"],
+                "product_id": ord["product_id"],
+                "quantity": ord["quantity"],
+                "total": ord["total"]
+            }
+        return res

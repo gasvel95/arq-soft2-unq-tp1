@@ -7,16 +7,17 @@ class UserRepositoryMongo(UserRepository):
     def __init__(self):
         self.collection = db["users"]
 
-    def add(self, user: User) -> str:
+    def add(self, user: User) -> User:
         user_data = user.to_dict()
         result = self.collection.insert_one(user_data)
-        return str(result.inserted_id)
+        user.id = str(result.inserted_id)
+        return user
 
     def get(self, user_id: str) -> User:
         data = self.collection.find_one({"_id": ObjectId(user_id)})
         if not data:
             raise Exception("User not found")
-        return User(**data)
+        return User.entity_mapping(data)
 
     def update(self, user: User) -> User:
         self.collection.update_one(
