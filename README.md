@@ -109,7 +109,7 @@ Aunque es un **monolito**, se organiza internamente:
 
 
 ## Diagramas
-![umlArq2](https://github.com/user-attachments/assets/ac346447-5f5b-4e05-912a-091c1479cfce)
+![umlArq2](/doc/UML.png)
 
 ### Diagramas de secuencia
 ![buscarProd](/doc/buscarProducto.png)
