@@ -1,17 +1,49 @@
-# Arquitectura de software 2 - Trabajo Práctico N1
+# Arquitectura de software 2 - Trabajo Práctico 1
+
+## Requisitos para su ejecución
+
+- [Python >= 3](https://www.python.org/downloads/)
+- Realizar la instalación de los requisitos mediante el siguiente comando en la carptea src:
+
+```
+pip install -r requirements.txt
+
+```
+
+- Archivo .env con la url de la BDD Mongo en la vairable MONGO_URI
+
+## Ejecución del API
+Ubicarse en la raiz de la carpeta src y ejecutar el siguiente comando
+```
+fastapi run main.py
+
+```
+
+## Ejecución de los tests
+Ubicarse en la raiz de la carpeta src y ejecutar el siguiente comando
+```
+pytest
+
+```
+
+En caso de ejecutar algun archivo test especifico:
+```
+pytest order_test.py
+
+```
 
 ## Modelo de Dominio (DDD)
 
 - **Entidades **:
-  - **Product**: (id, name, description, price, stock, idSeller, category).
-  - **User**: (id, name, lastName, email) — representa compradores o vendedores.
-  - **Order**: (id, itemList, price, idBuyer, shippingAddress, state).
-  - **Category**: (id, name, parentCategory) — clasifica productos.
+  - **Product**: (id, name, description, price, stock, seller_id, category).
+  - **User**: (id, first_name, last_name, email) — representa compradores o vendedores.
+  - **Order**: (id, product_id, total, buyer_id).
+  - **Seller**: (id, company_name, email).
+
 
 - **Objetos de Valor**:
-  - **Money**: (amount, currency).
-  - **Address**: (calle, ciudad, provincia, código postal).
-  - **Item**: (idProduct, quantity, unitPrice).
+  - **Price**: (amount, currency).
+  - **Category**: (name) — clasifica productos.
 
 - **Agregados**:
   - Cada agregado tiene una raíz (por ejemplo, `Product`, `Order`).
@@ -22,21 +54,21 @@
 Servicios principales que orquestan casos de uso:
 
 - **ProductService**: Crear, modificar, eliminar y buscar productos.
-- **UserService**: Registrar y actualizar usuarios.
-- **OrderService**: Procesar ventas, validar stock, calcular precios totales.
-- **SellerService**: Crear y gestionar vendedores.
+- **UserService**: Crear, modificar, eliminar usuarios.
+- **OrderService**: Procesar ventas.
+- **SellerService**: Crear, modificar, eliminar vendedores.
 
 Los servicios trabajan exclusivamente a través de **puertos**, sin conocer detalles de base de datos o infraestructura.
 
 ## Puertos y Adaptadores
 
-- **Puertos (Interfaces)**:
-  - **Repositorios**: `ProductRepository`, `UserRepository`, `SellerRepository`.
+- **Puertos**:
+  - **Repositorios**: `ProductRepository`, `UserRepository`, `SellerRepository`, `OrderRepository`.
 
 
-- **Adaptadores (Implementaciones)**:
-  - **Base de Datos**: `MongoProductRepository`, `MongoUserRepository`.
-  - **Web (REST)**: Controladores que manejan las peticiones HTTP.
+- **Adaptadores**:
+  - **Base de Datos**: `MongoProductRepository`, `MongoUserRepository`,`MongoSellerRepository`,`MongoOrderRepository`.
+  - **REST**: Controladores que manejan las peticiones HTTP, ubicado en main (temporalmente).
 
 
 ## Estructura del Componente
@@ -60,18 +92,31 @@ Aunque es un **monolito**, se organiza internamente:
 - **Usuarios**:
   - `POST /users` — Registrar un nuevo usuario.
   - `PUT /users/{id}` — Actualizar información de un usuario.
-  - `DELETE /users/{id}` — Eliminar un usuario.
+  - `GET /users/{id}` — Obtener información de un usuario.
+  - `DELETE /users/{id}` — Elimina un usuario.
 
 - **Vendedores**:
   - `POST /sellers` — Registrar un nuevo vendedor.
   - `PUT /sellers/{id}` — Actualizar un vendedor.
-  - `DELETE /sellers/{id}` — Eliminar un vendedor.
+  - `GET /sellers/{id}` — Obtener información de un vendedor.
+  - `DELETE /sellers/{id}` — Elimina vendedor.
 
 - **Ventas**:
   - `POST /orders` — Procesar la venta de un producto.
+  - `GET /orders/{id}` — Obtener información de la venta de un producto.
 
 ---
 
 
 ## Diagramas
 ![umlArq2](https://github.com/user-attachments/assets/ac346447-5f5b-4e05-912a-091c1479cfce)
+
+### Diagramas de secuencia
+![buscarProd](/doc/buscarProducto.png)
+![crearProd](/doc/crearProducto.png)
+![crearUsr](/doc/crearUsuario.png)
+![crearSeller](/doc/crearVendedor.png)
+![venta](/doc/venta.png)
+
+### Video
+[Video corriendo en ambiente local](/doc/VideoMuestra.mp4)
