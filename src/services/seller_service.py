@@ -13,7 +13,8 @@ class SellerService:
         return seller
     def get_seller(self, id: str) -> Seller:
         try:
-            s = self.seller_repo.get(id)
+            return self.seller_repo.get(id)
         except:
             raise ValueError("Seller not found")
-        return s
+    def delete_seller(self,id:str):
+        return self.seller_repo.delete(id)

@@ -10,10 +10,13 @@ class UserService:
     def create_user(self, usr:User) -> User:
         return self.user_repo.add(usr)
     def get_user(self, id: str) -> User:
-        u = self.user_repo.get(id)
-        if u is None: raise ValueError("User not found")
-        return u
+        try:
+            return self.user_repo.get(id)
+        except: 
+            raise ValueError("User not found")
     def update_user(self,id: str, usr: User) -> User:
         usr.id = id
         self.user_repo.update(usr)
         return usr
+    def delete_user(self,id:str):
+        return self.user_repo.delete(id)

@@ -42,6 +42,14 @@ def get_user(user_id: str):
         raise HTTPException(status_code=404, detail="User not found")
     return u
 
+@app.delete("/users/{user_id}")
+def delete_user(user_id: str):
+    try:
+        u = user_service.delete_user(user_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="User not found")
+    return u
+
 @app.post("/sellers", response_model=Seller)
 def create_seller(data: Seller):
     return seller_service.create_seller(data)
@@ -58,6 +66,13 @@ def get_seller(seller_id: str):
     except ValueError:
         raise HTTPException(status_code=404, detail="Seller not found")
     return s
+
+@app.delete("/sellers/{seller_id}")
+def delete_seller(seller_id: str):
+    try:
+        seller_service.delete_seller(seller_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Seller not found")
 
 @app.post("/products")
 def create_product(data: Product):
