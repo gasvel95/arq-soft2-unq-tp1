@@ -21,7 +21,7 @@ class UserRepositoryMongo(UserRepository):
 
     def update(self, user: User) -> User:
         self.collection.update_one(
-            {"_id": ObjectId(user._id)}, {"$set": user.to_dict()}
+            {"_id": ObjectId(user.id)}, {"$set": user.to_dict()}
         )
         return user
 

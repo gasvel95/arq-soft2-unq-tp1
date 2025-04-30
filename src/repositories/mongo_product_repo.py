@@ -25,7 +25,7 @@ class ProductRepositoryMongo(ProductRepository):
 
     def update(self, product: Product) -> Product:
         self.collection.update_one(
-            {"_id": ObjectId(product._id)}, {"$set": product.to_dict()}
+            {"_id": ObjectId(product.id)}, {"$set": product.to_dict()}
         )
         return product
 

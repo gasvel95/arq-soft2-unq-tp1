@@ -14,6 +14,6 @@ class UserService:
         if u is None: raise ValueError("User not found")
         return u
     def update_user(self,id: str, usr: User) -> User:
-        usr._id = id
+        usr.id = id
         self.user_repo.update(usr)
         return usr

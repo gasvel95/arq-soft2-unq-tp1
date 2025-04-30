@@ -9,11 +9,13 @@ class ProductService:
     def create_product(self, product: Product) -> Product:
         return self.product_repo.add(product)
     def get_product(self, id: str) -> Product:
-        p = self.product_repo.get(id)
-        if p is None: raise ValueError("Product not found")
-        return p
+        try:
+            return self.product_repo.get(id)
+        except:
+            raise ValueError("Product not found")
+
     def update_product(self, prod_id: str, prod: Product) -> Product:
-        prod._id = prod_id
+        prod.id = prod_id
         self.product_repo.update(prod)
         return prod
     def find_by_name(self, name:str) -> list[Product]:

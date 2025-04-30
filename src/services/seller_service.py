@@ -8,7 +8,7 @@ class SellerService:
     def create_seller(self, seller: Seller) -> Seller:
         return self.seller_repo.add(seller)
     def update_seller(self, seller_id: str, seller: Seller) -> Seller:
-        seller._id = seller_id
+        seller.id = seller_id
         self.seller_repo.update(seller)
         return seller
     def get_seller(self, id: str) -> Seller:
