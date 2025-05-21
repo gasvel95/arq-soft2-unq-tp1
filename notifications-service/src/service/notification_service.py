@@ -25,9 +25,5 @@ class NotificationService():
         
     def notification_seller(self,sellerName,selleraddress,subject,order_n,product_name,quantity, amount):
         body = f"<div> Estimado {sellerName} <br> Se ha registrado la siguiente venta Orden N° {order_n}. <br> Detalle: <br><ul><li>Producto: {product_name} </li><li>Cantidad: {quantity} </li><li>Monto: {amount} </li></ul> Ante cualquier duda enviar correo consultas@gmail.com<br><br>Saludos.<br>Atte.<br>"        
-        print("======================>>>>>> " + body)
         return self.email_service.sendEmail(selleraddress, body,subject)
         
-    ## TODO: agregar el servicio mailjet, el metodo de envio, y lo necesario.
-    ## opt: crear super clase del servicio mailjet y que esta herede el comportamiento de envio de email. 
-    
