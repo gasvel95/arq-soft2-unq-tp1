@@ -21,8 +21,8 @@ class Notification(BaseModel):
     id: Optional[str] = None
     typeNotification: TypeNotification
     status: Status
-    #date : datetime#https://stackoverflow.com/questions/7651064/create-an-isodate-with-pymongo
-    adress: str # puede ser nro, o email, etc, dependiendo del tipo de notificacion. 
+    date : datetime = datetime.now() #https://stackoverflow.com/questions/7651064/create-an-isodate-with-pymongo
+    address: str # puede ser nro, o email, etc, dependiendo del tipo de notificacion. 
     orderId: str
     message : str
 
@@ -43,8 +43,8 @@ class Notification(BaseModel):
                 "id": notif_id,
                 "typeNotification": notif["typeNotification"],
                 "status": notif["status"],
-               # "date": notif["date"],
-                "adress": notif["adress"],
+                "date": notif["date"],
+                "address": notif["address"],
                 "orderId": notif["orderId"],
                 "message": notif["message"]
             }
@@ -55,8 +55,8 @@ class Notification(BaseModel):
                 "id": self.id,
                 "typeNotification": self.typeNotification,
                 "status": self.status,
-               # "date": self.date,
-                "adress": self.adress,
+                "date": self.date,
+                "address": self.address,
                 "orderId": self.orderId,
                 "message": self.message
             }
