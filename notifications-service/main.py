@@ -42,11 +42,11 @@ async def send_notification_email(request: Request):
     print(body)
     data = json.loads(body)
     newNot = None
-    result = notification_service.notification_seller(data["sellerName"], data["sellerAddress"],data["subject"],data["orderN"],data["productName"],data["quantity"],data["amount"] )
+    result = notification_service.send_notification_user(data["userName"], data["userAddress"], data["action"],data["subject"],data["orderN"],data["productName"],data["quantity"],data["amount"] )
     if(result):
-        newNot = Notification(id="asdf",typeNotification="Mail",status="Sended",address=data["sellerAddress"],orderId= data["orderN"],message="message" )
+        newNot = Notification(id="asdf",typeNotification="Mail",status="Sended",address=data["userAddress"],orderId= data["orderN"])
     else:
-        newNot = Notification(id="asdf",typeNotification="Mail",status="Sended",address=data["sellerAddress"],orderId= data["orderN"],message="message" )    #notif = notification_service.create_notification(newNot)
+        newNot = Notification(id="asdf",typeNotification="Mail",status="Sended",address=data["userAddress"],orderId= data["orderN"])    #notif = notification_service.create_notification(newNot)
     notif = notification_service.create_notification(newNot)
     return  notif
 

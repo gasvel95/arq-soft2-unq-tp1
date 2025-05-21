@@ -23,7 +23,8 @@ class NotificationService():
     def send_notification_email(self, toaddress, message_html, subject) -> bool:
         return self.email_service.sendEmail(toaddress,message_html,subject)
         
-    def notification_seller(self,sellerName,selleraddress,subject,order_n,product_name,quantity, amount):
-        body = f"<div> Estimado {sellerName} <br> Se ha registrado la siguiente venta Orden N° {order_n}. <br> Detalle: <br><ul><li>Producto: {product_name} </li><li>Cantidad: {quantity} </li><li>Monto: {amount} </li></ul> Ante cualquier duda enviar correo consultas@gmail.com<br><br>Saludos.<br>Atte.<br>"        
-        return self.email_service.sendEmail(selleraddress, body,subject)
+    def send_notification_user(self,name,address, action ,subject,order_n,product_name,quantity, amount):
+        body = f"<div> Estimado {name} <br> Se ha registrado la siguiente {action}, segun la Orden N° {order_n}. <br> Detalle: <br><ul><li>Producto: {product_name} </li><li>Cantidad: {quantity} </li><li>Monto: {amount} </li></ul> Ante cualquier duda enviar correo consultas@gmail.com<br><br>Saludos.<br>Atte.<br>"        
+        return self.email_service.sendEmail(address, body,subject)
+        #action: compra o venta. 
         

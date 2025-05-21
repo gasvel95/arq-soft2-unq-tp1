@@ -24,7 +24,6 @@ class Notification(BaseModel):
     date : datetime = datetime.now() #https://stackoverflow.com/questions/7651064/create-an-isodate-with-pymongo
     address: str # puede ser nro, o email, etc, dependiendo del tipo de notificacion. 
     orderId: str
-    message : str
 
     ## Email Revisar opcion:  https://www.mailjet.com/pricing/
     ## Revisar Whatsapp https://green-api.com/en/docs/sdk/python/   |  https://www.callmebot.com/es/blog/api-gratis-mensajes-whatsapp/  
@@ -45,8 +44,7 @@ class Notification(BaseModel):
                 "status": notif["status"],
                 "date": notif["date"],
                 "address": notif["address"],
-                "orderId": notif["orderId"],
-                "message": notif["message"]
+                "orderId": notif["orderId"] 
             }
         return res
 
@@ -57,6 +55,5 @@ class Notification(BaseModel):
                 "status": self.status,
                 "date": self.date,
                 "address": self.address,
-                "orderId": self.orderId,
-                "message": self.message
+                "orderId": self.orderId 
             }
