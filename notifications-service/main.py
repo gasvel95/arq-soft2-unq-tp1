@@ -1,3 +1,5 @@
+import uvicorn
+from fastapi_websocket_rpc import RpcMethodsBase, WebsocketRPCEndpoint
 from typing import Union
 from fastapi import FastAPI
 from src.repository.notification_repository import NotificationRepositoryImpl
@@ -44,10 +46,29 @@ async def send_notification_email(request: Request):
     newNot = None
     result = notification_service.send_notification_user(data["userName"], data["userAddress"], data["action"],data["subject"],data["orderN"],data["productName"],data["quantity"],data["amount"] )
     if(result):
-        newNot = Notification(id="asdf",typeNotification="Mail",status="Sended",address=data["userAddress"],orderId= data["orderN"])
+        newNot = Notification(typeNotification="Mail",status="Sended",address=data["userAddress"],orderId= data["orderN"])
     else:
-        newNot = Notification(id="asdf",typeNotification="Mail",status="Sended",address=data["userAddress"],orderId= data["orderN"])    #notif = notification_service.create_notification(newNot)
+        newNot = Notification(typeNotification="Mail",status="Sended",address=data["userAddress"],orderId= data["orderN"])    #notif = notification_service.create_notification(newNot)
     notif = notification_service.create_notification(newNot)
     return  notif
 
 
+class NotificationServer(RpcMethodsBase):
+
+    async def sendMail(self, notif: str)-> str:
+        body =  notif
+        print(body)
+        data = json.loads(body)
+        newNot = None
+        result = notification_service.send_notification_user(data["userName"], data["userAddress"], data["action"],data["subject"],data["orderN"],data["productName"],data["quantity"],data["amount"] )
+        if(result):
+            newNot = Notification(typeNotification="Mail",status="Sended",address=data["userAddress"],orderId= data["orderN"])
+        else:
+            newNot = Notification(typeNotification="Mail",status="Error",address=data["userAddress"],orderId= data["orderN"])    #notif = notification_service.create_notification(newNot)
+        notif = notification_service.create_notification(newNot)
+        return newNot.status
+
+
+endpoint = WebsocketRPCEndpoint(NotificationServer())
+endpoint.register_route(app, "/ws")
+uvicorn.run(app,host="0.0.0.0",port=9002)
