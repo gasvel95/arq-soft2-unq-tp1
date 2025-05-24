@@ -4,7 +4,10 @@ from domain.order_repository_interface import OrderRepository
 from domain.product import Product
 from domain.product_repository_interface import ProductRepository
 from domain.user_repository_interface import UserRepository
-
+from fastapi_websocket_rpc import RpcMethodsBase, WebSocketRpcClient
+import asyncio
+import json
+PORT = 9002
 
 class OrderService:
     def __init__(self, user_repo: UserRepository, product_repo: ProductRepository, order_repo: OrderRepository):
@@ -25,4 +28,28 @@ class OrderService:
         self.product_repo.update(product)
         order.calculate_total(product.price)
         self.order_repo.add(order)
+        ## envio de notificacion cliente.
+        notif = self.util_notification_obj(name=user['first_name'], email=user['email'], action="Compra",subject="Compra de producto", orderId=order.id, productName=product.name, quantity=order.quantity, amount=order.total.amount, curr=order.total.currency)
+        notifi_user = asyncio.run(self.run_client(f"ws://localhost:{PORT}/ws" ,json.dumps(notif)))
+        #notifi_seller = asyncio.run(self.run_client(f"ws://localhost:{PORT}/ws" ,json.dumps(notif)))
+
         return order
+    
+    async def run_client(self, uri , notif:str) -> object:
+        async with WebSocketRpcClient(uri, RpcMethodsBase()) as client:
+            print(f"notifi---> {notif}")
+            response = await client.other.sendMail(notif=notif)
+            return response.result
+        
+    def util_notification_obj(self, name:str, email:str, action:str,subject:str, orderId:str, productName:str,quantity:int,amount:int,curr:str)->dict :  
+        return {
+            "userName":name, 
+            "userAddress":email, 
+            "action": action, 
+            "subject": subject,
+            "orderN": orderId,
+            "productName": productName,
+            "quantity": quantity, 
+            "amount": f"{amount}  {curr} "  
+        }
+        

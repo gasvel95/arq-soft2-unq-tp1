@@ -33,13 +33,13 @@ def set_up_data(test_app: TestClient):
                     "id": "11119ee78892ca8adcf46c3e",
                     "first_name": "Fulano",
                     "last_name": "Detal",
-                    "email": "pruebas@test.com"
+                    "email": "mauroportilloe@gmail.com"
                 }
     
     response_user = test_app.post(url='/users', json=new_user)
     new_seller = {
                     "id": "22229ee78892ca8adcf46c3e",
-                    "email": "company@test.com",
+                    "email": "mauroportilloe@gmail.com",
                     "company_name": "Company SA"
                 }
     response_seller = test_app.post(url='/sellers', json=new_seller)
