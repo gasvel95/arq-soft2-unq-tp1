@@ -11,6 +11,8 @@ from services.order_service import OrderService
 from services.product_service import ProductService
 from services.seller_service import SellerService
 from services.user_service import UserService
+from fastapi_websocket_rpc.logger import logging_config, LoggingModes
+
 
 app = FastAPI()
 
@@ -23,7 +25,7 @@ order_repo = OrderRepositoryMongo()
 user_service = UserService(user_repo)
 seller_service = SellerService(seller_repo)
 product_service = ProductService(product_repo)
-order_service = OrderService(user_repo, product_repo, order_repo)
+order_service = OrderService(user_repo, product_repo, order_repo, seller_repo)
 
 @app.post("/users", response_model=User)
 def create_user(data: User):
