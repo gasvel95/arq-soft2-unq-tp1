@@ -1,4 +1,3 @@
-import uuid
 from domain.order import Order
 from domain.order_repository_interface import OrderRepository
 from domain.product import Product
@@ -10,6 +9,7 @@ import asyncio
 import json
 from domain.seller import Seller
 from fastapi_websocket_rpc.logger import logging_config, LoggingModes
+
 
 PORT = 9002
 
@@ -61,9 +61,4 @@ class OrderService:
             "productName": productName,
             "quantity": quantity, 
             "amount": f"{amount}  {curr} "  
-        }
-    async def get_seller_rpc(self, uri , id_seller:str)->object:
-        async with WebSocketRpcClient(uri, RpcMethodsBase()) as client:
-            print(f"notifi---> {id_seller}")
-            response = await client.other.get_seller(id_seller=id_seller)
-            return response    
+        } 
