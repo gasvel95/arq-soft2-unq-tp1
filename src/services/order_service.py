@@ -1,6 +1,7 @@
 from domain.order import Order
 from domain.order_repository_interface import OrderRepository
 from domain.product import Product
+from domain.user import User
 from domain.product_repository_interface import ProductRepository
 from domain.seller_repository_interface import SellerRepository
 from domain.user_repository_interface import UserRepository
@@ -25,9 +26,11 @@ class OrderService:
             return self.order_repo.get(id)
         except:
             raise ValueError('Order not found')
-    def  process_order(self, order: Order) -> Order:
+    def  process_order(self, user_:User, order: Order) -> Order:
         user = self.user_repo.get(order.buyer_id)
+        #user = json.loads(user_)
         if user is None: raise ValueError("User not found")
+        print(f"user ===>>>>> {user_}")
         product = Product(**self.product_repo.get(order.product_id))
         if product is None: raise ValueError("Product not found")
         product.reduce_stock(order.quantity)

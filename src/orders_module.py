@@ -6,6 +6,8 @@ from repositories.mongo_order_repo import OrderRepositoryMongo
 from repositories.mongo_product_repo import ProductRepositoryMongo
 from services.order_service import OrderService
 from services.product_service import ProductService
+from repositories.mongo_seller_repo import SellerRepositoryMongo
+from repositories.mongo_user_repo import UserRepositoryMongo
 import asyncio
 from fastapi_websocket_rpc import RpcMethodsBase, WebSocketRpcClient
 
@@ -15,7 +17,9 @@ PORT = 9001
 product_repo = ProductRepositoryMongo()
 order_repo = OrderRepositoryMongo()
 product_service = ProductService(product_repo)
-order_service = OrderService(product_repo, order_repo)
+seller_repo =SellerRepositoryMongo()
+user_repo = UserRepositoryMongo()
+order_service = OrderService(user_repo, product_repo, order_repo, seller_repo)
 
 # RPC config client
 async def run_client(uri,user_id):
@@ -92,4 +96,4 @@ def create_order(order_id: str):
 
 
 
-uvicorn.run(app,host="0.0.0.0",port=9000)
+#uvicorn.run(app,host="0.0.0.0",port=9000)

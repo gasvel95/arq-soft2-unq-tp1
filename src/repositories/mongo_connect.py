@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
+import certifi
+
 
 client = None
 db = None
@@ -14,7 +16,7 @@ MONGO_URI = os.getenv("MONGO_URI")
 def get_client():
     global client
     if client is None:
-        client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
+        client = MongoClient(MONGO_URI, server_api=ServerApi('1'), tlsCAFile=certifi.where())
     return client
 
 def db_selection(client):

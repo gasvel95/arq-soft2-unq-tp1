@@ -2,8 +2,10 @@ from typing import Any
 from fastapi.testclient import TestClient
 import pytest
 import mongomock
-from main import app
+from orders_module import app
+from users_module import app as app_us
 import repositories.mongo_connect as db
+import json
 
 @pytest.fixture(autouse=True, scope='module')
 def monkeymodule():
@@ -28,7 +30,12 @@ def test_app(set_up_mongo: None, set_up_db: None):
         yield test_client
 
 @pytest.fixture(scope="module")
-def set_up_data(test_app: TestClient):
+def test_app_us(set_up_mongo: None, set_up_db: None):
+    with TestClient(app_us) as test_client:
+        yield test_client
+
+@pytest.fixture(scope="module")
+def set_up_data(test_app_us: TestClient, test_app: TestClient):
     new_user = {
                     "id": "11119ee78892ca8adcf46c3e",
                     "first_name": "Fulano",
@@ -36,13 +43,13 @@ def set_up_data(test_app: TestClient):
                     "email": "mauroportilloe@gmail.com"
                 }
     
-    response_user = test_app.post(url='/users', json=new_user)
+    response_user = test_app_us.post(url='/users', json=new_user)
     new_seller = {
                     "id": "22229ee78892ca8adcf46c3e",
                     "email": "mauroportilloe@gmail.com",
                     "company_name": "Company SA"
                 }
-    response_seller = test_app.post(url='/sellers', json=new_seller)
+    response_seller = test_app_us.post(url='/sellers', json=new_seller)
     print(response_seller.json())
     new_prod = {
                     "id": "33339ee78892ca8adcf46c3e",
@@ -73,13 +80,17 @@ def test_new_order(set_up_mongo: None, test_app: TestClient, set_up_data: Any):
                     "quantity": 1
                 }
     response = test_app.post(url='/orders', json=new_order)
+
     assert response.status_code == 200
     assert response.json()["buyer_id"] == info_user["id"]
     assert response.json()["product_id"] == info_prod["id"]
     assert response.json()["total"] == {"amount": 10, "currency": "USD"}
 
+
 def test_get_order(set_up_mongo: None, test_app: TestClient, set_up_data: Any):
     info_user, info_prod,info_order = set_up_data
+    print(f"info_order {info_order}")    
+#    info_order = json.loads(info_order_)
     inserted_id = info_order["id"]
     print(inserted_id)
     response = test_app.get(url='/orders' + '/' + inserted_id)

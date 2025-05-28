@@ -4,6 +4,7 @@ import mongomock
 from users_module import app
 import repositories.mongo_connect as db
 
+
 @pytest.fixture(autouse=True, scope='module')
 def monkeymodule():
     with pytest.MonkeyPatch.context() as marketplace:
@@ -25,7 +26,7 @@ def set_up_db(monkeymodule: pytest.MonkeyPatch):
 def test_app(set_up_mongo: None, set_up_db: None):
     with TestClient(app) as test_client:
         yield test_client
-    
+        
 def test_new_users(set_up_mongo: None, test_app: TestClient):
     new_user = {
                     "id": "idtest",
@@ -37,7 +38,6 @@ def test_new_users(set_up_mongo: None, test_app: TestClient):
     response = test_app.post(url='/users', json=new_user)
     assert response.status_code == 200
     assert response.json()["first_name"] == "Fulano"
-
 
 
 def test_get_user(set_up_mongo: None, test_app: TestClient):
@@ -53,6 +53,7 @@ def test_get_user(set_up_mongo: None, test_app: TestClient):
     response = test_app.get(url='/users' + '/' + inserted_id)
     assert response.status_code == 200
     assert response.json()["first_name"] == "Fulano"
+
 
 def test_update_user(set_up_mongo: None, test_app: TestClient):
     new_user = {

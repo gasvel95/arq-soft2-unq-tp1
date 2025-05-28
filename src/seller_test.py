@@ -58,6 +58,7 @@ def test_get_seller_not_found(set_up_mongo: None, test_app: TestClient, set_up_d
     response = test_app.get(url='/sellers' + '/77779ee78892ca8adcf46c3e')
     assert response.status_code == 404
 
+
 def test_update_seller(set_up_mongo: None, test_app: TestClient, set_up_data: Any):
     info_seller = set_up_data
     inserted_id = info_seller["id"]
