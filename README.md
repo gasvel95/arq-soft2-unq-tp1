@@ -120,3 +120,43 @@ Aunque es un **monolito**, se organiza internamente:
 
 ### Video
 [Video corriendo en ambiente local](/doc/VideoMuestra.mp4)
+
+# Entregable 2
+
+## Granularidad
+
+Para mejorar la legibilidad, la mantenibilidad y la resiliencia del sistema, hemos desgranularizado el main en tres módulos independientes:
+
+Users
+
+    Gestiona toda la lógica relacionada con la creación, consulta, actualización y eliminación de usuarios.
+
+    Incluye validaciones específicas de dominio.
+
+Notifications
+
+    Encapsula el envío de notificaciones (email, SMS, push).
+
+    Permite agregar nuevas estrategias de notificación sin afectar la lógica de negocio de otros componentes.
+
+    Gestiona reintentos, colas y circuit breakers para garantizar entrega confiable.
+
+Orders (Products)
+
+    Maneja la lógica de creación y gestión de pedidos, así como el catálogo de productos.
+
+    Incluye cálculos de precios, aplicación de promociones y validaciones de inventario.
+
+    Se integra con servicios externos (métodos de pago, stock) a través de adaptadores específicos.
+
+### Decisiones de la granularidad
+
+**Principio de responsabilidad única (SRP):** cada módulo tiene una única razón para cambiar, minimizando el acoplamiento y simplificando el alcance de pruebas unitarias y de integración.
+
+**Volatilidad del código:** al aislar las áreas con mayor frecuencia de cambio (por ejemplo, políticas de notificación o reglas de negocio de pedidos), reducimos el riesgo de efectos colaterales en otras partes de la aplicación.
+
+**Escalabilidad y rendimiento:** cada componente puede escalar de forma independiente. Por ejemplo, en picos de alta carga de notificaciones, podemos desplegar más instancias del módulo de Notifications sin necesidad de replicar los servicios de Users u Orders.
+
+**Tolerancia a fallos:** un fallo o degradación en un módulo (por ejemplo, caída de un proveedor de notificaciones) no afecta la disponibilidad de los demás. Podemos aplicar patrones como circuit breaker y fallback a nivel de módulo.
+
+**Despliegue continuo:** la granularidad reduce el tamaño de los paquetes de despliegue y disminuye el riesgo de errores al actualizar una funcionalidad concreta, acelerando los ciclos de entrega.
