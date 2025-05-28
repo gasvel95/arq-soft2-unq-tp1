@@ -2,7 +2,7 @@ from typing import Any
 from fastapi.testclient import TestClient
 import pytest
 import mongomock
-from main import app
+from users_module import app
 import repositories.mongo_connect as db
 
 @pytest.fixture(autouse=True, scope='module')
