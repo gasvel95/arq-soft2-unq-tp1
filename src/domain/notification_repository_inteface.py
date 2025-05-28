@@ -1,0 +1,14 @@
+from abc import ABC, abstractmethod
+from typing import Optional
+from domain.notification import Notification
+
+class NotificationRepository(ABC):
+    
+    @abstractmethod
+    def create(self, notification: Notification): ...
+    
+    @abstractmethod
+    def getById(self, id: str): ...
+
+    @abstractmethod
+    def delete(self, id: str): ...
