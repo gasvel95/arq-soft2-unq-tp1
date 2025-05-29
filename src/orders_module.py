@@ -6,8 +6,6 @@ from repositories.mongo_order_repo import OrderRepositoryMongo
 from repositories.mongo_product_repo import ProductRepositoryMongo
 from services.order_service import OrderService
 from services.product_service import ProductService
-from repositories.mongo_seller_repo import SellerRepositoryMongo
-from repositories.mongo_user_repo import UserRepositoryMongo
 import asyncio
 from fastapi_websocket_rpc import RpcMethodsBase, WebSocketRpcClient
 
@@ -17,9 +15,7 @@ PORT = 9001
 product_repo = ProductRepositoryMongo()
 order_repo = OrderRepositoryMongo()
 product_service = ProductService(product_repo)
-seller_repo =SellerRepositoryMongo()
-user_repo = UserRepositoryMongo()
-order_service = OrderService(user_repo, product_repo, order_repo, seller_repo)
+order_service = OrderService(product_repo, order_repo)
 
 # RPC config client
 async def run_client(uri,user_id):
@@ -28,9 +24,19 @@ async def run_client(uri,user_id):
         return response.result
     
 # RPC to discount amount from user's wallet
-async def purchase_order(uri,user_id, amount):
+async def purchase_order(uri,user_id,seller_id, amount):
     async with WebSocketRpcClient(uri,RpcMethodsBase()) as client:
-        response = await client.other.buyOrder(id=user_id, amount=amount)
+        response = await client.other.buyOrder(user_id=user_id,seller_id=seller_id, amount=amount)
+        return response.result
+    
+async def notify_user(uri,user_id, order, product_name):
+    async with WebSocketRpcClient(uri,RpcMethodsBase()) as client:
+        response = await client.other.notifyUser(id=user_id, order=order,productName=product_name )
+        return response.result
+    
+async def notify_seller(uri,user_id, order,product_name):
+    async with WebSocketRpcClient(uri,RpcMethodsBase()) as client:
+        response = await client.other.notifySeller(id=user_id, order=order,productName=product_name)
         return response.result
 
 @app.post("/products")
@@ -82,6 +88,11 @@ def create_order(data: Order):
     try:
         user = asyncio.run(run_client(f"ws://localhost:{PORT}/ws",data.buyer_id))
         order = order_service.process_order(user,data)
+        product = product_service.get_product(order.product_id)
+        if order != None:
+            asyncio.run(purchase_order(f"ws://localhost:{PORT}/ws",order.buyer_id,product["seller_id"],order.total))
+            asyncio.run(notify_user(f"ws://localhost:{PORT}/ws",order.buyer_id,order,product["name"]))
+            asyncio.run(notify_seller(f"ws://localhost:{PORT}/ws",product["seller_id"],order,product["name"]))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return order
@@ -96,4 +107,5 @@ def create_order(order_id: str):
 
 
 
-#uvicorn.run(app,host="0.0.0.0",port=9000)
+if __name__ == "__main__":
+    uvicorn.run(app,host="0.0.0.0",port=9000)
