@@ -161,6 +161,10 @@ Orders (Products)
 
 **Despliegue continuo:** la granularidad reduce el tamaño de los paquetes de despliegue y disminuye el riesgo de errores al actualizar una funcionalidad concreta, acelerando los ciclos de entrega.
 
+## Modelado de Datos
+![datos](/doc/datos.png)
+
+
 # Arquitectura de software 2 - Trabajo Práctico 1
 
 ## Requisitos para su ejecución

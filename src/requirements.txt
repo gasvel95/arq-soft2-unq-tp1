@@ -7,3 +7,11 @@ pymongo==4.6.2
 pytest==8.3.5
 python-dotenv==1.0.1
 fastapi_websocket_rpc==0.1.29
+uvicorn
+pytest-asyncio
+fastapi-websocket-rpc
+requests
+httpx
+asynctest
+mailjet-rest
+fastapi[standard]
