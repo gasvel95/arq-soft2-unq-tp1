@@ -2,6 +2,8 @@ from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel
 
+from domain.price import Price
+
 
 class User(BaseModel):
     _id: Optional[ObjectId] = None
@@ -9,12 +11,13 @@ class User(BaseModel):
     first_name: str
     last_name: str
     email: str
+    wallet: int = 0
 
     def list_serial_user(users) -> list:
         return [User.user_entity(user) for user in users]
 
     def to_dict(self):
-        return { "first_name": self.first_name, "last_name": self.last_name, "email": self.email}
+        return { "first_name": self.first_name, "last_name": self.last_name, "email": self.email, "wallet": self.wallet}
     
     def entity_mapping(usr) -> dict:
         res = {}
@@ -28,6 +31,13 @@ class User(BaseModel):
                 "id": usr_id,
                 "first_name": usr["first_name"],
                 "last_name": usr["last_name"],
-                "email": usr["email"]
+                "email": usr["email"],
+                "wallet": usr["wallet"]
             }
         return res
+    
+    def charge_wallet(self,price:Price):
+        self.wallet += price.amount
+
+    def discount_wallet(self,price:Price):
+        self.wallet -= price.amount   
