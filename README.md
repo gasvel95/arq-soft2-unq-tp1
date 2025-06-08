@@ -161,6 +161,9 @@ Orders (Products)
 
 **Despliegue continuo:** la granularidad reduce el tamaño de los paquetes de despliegue y disminuye el riesgo de errores al actualizar una funcionalidad concreta, acelerando los ciclos de entrega.
 
+
+
+
 # Arquitectura de software 2 - Trabajo Práctico 1
 
 ## Requisitos para su ejecución
@@ -394,3 +397,6 @@ Al implementar adaptadores especializados para gestionar errores (reintentos, ci
 
 ### Escalabilidad modular  
 Cada adaptador puede escalar de forma independiente (por ejemplo, instancias de API, réplicas de base de datos), mientras que el núcleo de dominio se mantiene único y consistente.
+
+## Modelado de Datos
+![datos](/doc/datos.png)

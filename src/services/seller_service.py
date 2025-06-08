@@ -1,4 +1,5 @@
 import uuid
+from domain.price import Price
 from domain.seller import Seller
 from domain.seller_repository_interface import SellerRepository
 
@@ -18,3 +19,20 @@ class SellerService:
             raise ValueError("Seller not found")
     def delete_seller(self,id:str):
         return self.seller_repo.delete(id)
+    
+    def discount_amount(self,id:str,amount:Price):
+        try:
+            seller = Seller(**self.seller_repo.get(id))
+            seller.discount_wallet(amount)
+            self.seller_repo.update(seller)
+            return seller
+        except: 
+            raise ValueError("seller not found")
+    def charge_amount(self,id:str,amount:Price):
+        try:
+            seller = Seller(**self.seller_repo.get(id))
+            seller.charge_wallet(amount)
+            self.seller_repo.update(seller)
+            return seller
+        except: 
+            raise ValueError("seller not found")
