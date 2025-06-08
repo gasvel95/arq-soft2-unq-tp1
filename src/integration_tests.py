@@ -152,3 +152,102 @@ def test_order_creation_error(server):
     assert response_user_delete.status_code == 200
     response_seller_delete = requests.delete(url=URL_USERS +"/sellers/"+seller_id)
     assert response_seller_delete.status_code == 200
+
+@pytest.mark.asyncio
+def test_user_CRUD(server):
+    jsonBody = {    
+                    "first_name": "Fulano",
+                    "last_name": "Detal",
+                    "email": "user@test.com"
+                    }
+
+    response = requests.post(url= URL_USERS + "/users",json=jsonBody)
+    buyer_id = response.json()["id"]
+    assert response.status_code == 200
+    assert response.json()["first_name"] == "Fulano"
+    assert response.json()["wallet"] == 0
+
+    jsonUpdatedBody = {    
+                "first_name": "Mengano",
+                "last_name": "Detal",
+                "email": "user@test.com"
+                }
+
+    response = requests.put(url= URL_USERS + "/users/"+buyer_id,json=jsonUpdatedBody)
+    assert response.status_code == 200
+    assert response.json()["first_name"] == "Mengano"
+    assert response.json()["wallet"] == 0
+
+    charge = {
+        "amount": 200,
+        "currency": "USD"
+    }
+    response = requests.put(url= URL_USERS + "/users/"+buyer_id+"/charge",json=charge)
+    assert response.status_code == 200
+    assert response.json()["first_name"] == "Mengano"
+    assert response.json()["wallet"] == 200
+
+    discharge = {
+        "amount": 100,
+        "currency": "USD"
+    }
+    response = requests.put(url= URL_USERS + "/users/"+buyer_id+"/discharge",json=discharge)
+    assert response.status_code == 200
+    assert response.json()["first_name"] == "Mengano"
+    assert response.json()["wallet"] == 100
+
+    ##Cleanup
+    response_user_delete = requests.delete(url= URL_USERS +"/users/"+buyer_id)
+    assert response_user_delete.status_code == 200
+
+    response = requests.get(url=URL_USERS+"/users/"+buyer_id)
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+def test_seller_CRUD(server):
+    jsonBody = {    
+                    "company_name": "Fulano SA",
+                    "email": "user@test.com"
+                    }
+
+    response = requests.post(url= URL_USERS + "/sellers",json=jsonBody)
+    buyer_id = response.json()["id"]
+    assert response.status_code == 200
+    assert response.json()["company_name"] == "Fulano SA"
+    assert response.json()["wallet"] == 0
+
+    jsonUpdatedBody = {    
+                "company_name": "Mengano SA",
+                "email": "user@test.com"
+                }
+
+    response = requests.put(url= URL_USERS + "/sellers/"+buyer_id,json=jsonUpdatedBody)
+    assert response.status_code == 200
+    assert response.json()["company_name"] == "Mengano SA"
+    assert response.json()["wallet"] == 0
+
+    charge = {
+        "amount": 200,
+        "currency": "USD"
+    }
+    response = requests.put(url= URL_USERS + "/sellers/"+buyer_id+"/charge",json=charge)
+    assert response.status_code == 200
+    assert response.json()["company_name"] == "Mengano SA"
+    assert response.json()["wallet"] == 200
+
+    discharge = {
+        "amount": 100,
+        "currency": "USD"
+    }
+    response = requests.put(url= URL_USERS + "/sellers/"+buyer_id+"/discharge",json=discharge)
+    assert response.status_code == 200
+    assert response.json()["company_name"] == "Mengano SA"
+    assert response.json()["wallet"] == 100
+
+    ##Cleanup
+    response_user_delete = requests.delete(url= URL_USERS +"/sellers/"+buyer_id)
+    assert response_user_delete.status_code == 200
+
+    response = requests.get(url=URL_USERS+"/sellers/"+buyer_id)
+    assert response.status_code == 404
