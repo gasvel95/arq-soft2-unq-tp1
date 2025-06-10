@@ -251,3 +251,46 @@ def test_seller_CRUD(server):
 
     response = requests.get(url=URL_USERS+"/sellers/"+buyer_id)
     assert response.status_code == 404
+
+@pytest.mark.asyncio
+def test_product_CRUD(server):
+    jsonBody = {    
+                    "company_name": "Fulano SA",
+                    "email": "user@test.com"
+                    }
+
+    response = requests.post(url= URL_USERS + "/sellers",json=jsonBody)
+    seller_id = response.json()["id"]
+    assert response.status_code == 200
+    new_prod = {
+                    "name": "Heladera",
+                    "description": "Ideal para pruebas",
+                    "category": "Hogar",
+                    "price": {"amount":10,"currency": "USD"},
+                    "stock": 2,
+                    "seller_id": seller_id
+                }
+    response_product = requests.post(url=URL_ORDERS +"/products",json=new_prod)
+    assert response_product.status_code == 200
+    product_id = response_product.json()["id"]
+
+    new_prod_upd = {
+            "name": "Heladera",
+            "description": "Ideal para pruebas",
+            "category": "Hogar",
+            "price": {"amount":30,"currency": "USD"},
+            "stock": 2,
+            "seller_id": seller_id
+        }
+    response_product = requests.put(url=URL_ORDERS +"/products/"+product_id,json=new_prod_upd)
+    assert response_product.status_code == 200
+
+        
+    ##Cleanup
+    response_product_delete = requests.delete(url= URL_ORDERS +"/products/"+product_id)
+    assert response_product_delete.status_code == 200
+    response_user_delete = requests.delete(url= URL_USERS +"/sellers/"+seller_id)
+    assert response_user_delete.status_code == 200
+
+    response_product_get = requests.get(url=URL_ORDERS + "/products/"+ product_id)
+    assert response_product_get.status_code == 404
